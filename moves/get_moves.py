@@ -1,4 +1,4 @@
-from models import State
+from models import State, MoveDirection
 from checks import is_path_clear, is_room_available
 from constants import (
     STOP_POS,
@@ -6,8 +6,7 @@ from constants import (
     TARGET_STATE, TARGET_ROOM,
 )
 
-from moves.hall import move_from_room_to_hall
-from moves.room import move_from_hall_to_room
+from moves.get_move import move
 
 
 def get_moves_from_room_to_hall(
@@ -43,13 +42,14 @@ def get_moves_from_room_to_hall(
             ):
                 continue
             moves.append(
-                move_from_room_to_hall(
+                move(
                     state=state,
                     char=current_char,
                     start_pos=ROOM_POS[i],
                     target_pos=pos_idx,
                     room_idx=i,
                     char_room_idx=current_char_index,
+                    direction=MoveDirection.TO_HALL,
                 )
             )
 
@@ -89,13 +89,14 @@ def get_moves_from_hall_to_room(
             target_room_idx = len(state.rooms[room_idx]) - 1
 
         moves.append(
-            move_from_hall_to_room(
+            move(
                 state=state,
                 char=char,
                 start_pos=i,
                 target_pos=target_pos,
                 room_idx=room_idx,
-                target_room_idx=target_room_idx,
+                char_room_idx=target_room_idx,
+                direction=MoveDirection.TO_ROOM,
             )
         )
 

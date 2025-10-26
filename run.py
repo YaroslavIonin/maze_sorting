@@ -3,10 +3,8 @@ import itertools
 
 from heapq import heappush, heappop
 
-from models import State
 from moves import get_moves
-from constants import TARGET_STATE
-from utils import parse_input_lines
+from utils import get_base_and_target_states
 
 
 def solve(lines: list[str]) -> int:
@@ -20,7 +18,7 @@ def solve(lines: list[str]) -> int:
         минимальная энергия для достижения целевой конфигурации
     """
 
-    base_state: State = parse_input_lines(lines)
+    base_state, target_state = get_base_and_target_states(lines)
 
     counter = itertools.count()
     heap = [(0, next(counter), base_state)]
@@ -31,7 +29,7 @@ def solve(lines: list[str]) -> int:
 
     while heap:
         cost, _, state = heappop(heap)
-        if state == TARGET_STATE:
+        if state == target_state:
             return cost
 
         if cost > best_moves[state]:

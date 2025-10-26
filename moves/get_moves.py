@@ -1,9 +1,9 @@
 from models import State, MoveDirection
-from checks import is_path_clear, is_room_available
+from checks import is_path_clear, is_room_available, is_room_done
 from constants import (
     STOP_POS,
     ROOM_POS,
-    TARGET_STATE, TARGET_ROOM,
+    TARGET_ROOM,
 )
 
 from moves.get_move import move
@@ -17,7 +17,7 @@ def get_moves_from_room_to_hall(
     # варианты ходов из комнат в коридор
     for i, room in enumerate(state.rooms):
         # если комната готова - скипаем её
-        if room == TARGET_STATE.rooms[i]:
+        if is_room_done(room, i):
             continue
 
         # пеолучаем индекс и первый символ в комнате

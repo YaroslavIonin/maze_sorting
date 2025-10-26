@@ -1,5 +1,8 @@
 import sys
 
+from models import State
+from utils import parse_input_lines
+
 
 def solve(lines: list[str]) -> int:
     """
@@ -12,11 +15,12 @@ def solve(lines: list[str]) -> int:
         минимальная энергия для достижения целевой конфигурации
     """
 
-    return 0
+    state: State = parse_input_lines(lines)
+
+    return state
 
 
 def main():
-    # Чтение входных данных
     lines = []
     for line in sys.stdin:
         lines.append(line.rstrip('\n'))

@@ -3,9 +3,9 @@ import itertools
 
 from heapq import heappush, heappop
 
-from moves import get_moves
-from other import memory_checker, time_checker
-from utils import get_base_and_target_states
+from .moves import get_moves
+from .other import memory_checker, time_checker
+from .utils import get_base_and_target_states
 
 
 def solve(lines: list[str]) -> int:

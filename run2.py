@@ -61,6 +61,21 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
             break
 
         next_move = find_virus_move(virus, graph, gates)
+        if next_move is None:
+            break
+
+        threat_gates = [g for g in graph.get(virus, set()) if g in gates]
+
+        if threat_gates:
+            cut_gate = min(threat_gates)
+            result.append(f"{cut_gate}-{virus}")
+
+            graph[cut_gate].remove(virus)
+            graph[virus].remove(cut_gate)
+
+            if next_move in graph and virus in graph:
+                virus = next_move
+            continue
 
         candidate_edges = []
         for gate in gates:

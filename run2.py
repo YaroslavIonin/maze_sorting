@@ -11,6 +11,7 @@ def find_virus_move(start, graph, gates):
     }
     queue = deque([start])
 
+    reachable_gates = []
     while queue:
         current = queue.popleft()
         for neighbor in graph.get(current, []):
@@ -19,21 +20,34 @@ def find_virus_move(start, graph, gates):
                 prev_nodes[neighbor] = current
                 queue.append(neighbor)
 
-    reachable_gates = [g for g in gates if g in distances]
+                for gate in gates:
+                    if gate in graph[neighbor]:
+                        reachable_gates.append((distances[neighbor] + 1, gate, neighbor))
+
     if not reachable_gates:
         return None
 
-    min_dist = min(distances[g] for g in reachable_gates)
-    target_gate = min(list(g for g in reachable_gates if distances[g] == min_dist))
+    reachable_gates.sort()
+    return reachable_gates[0][1:]
 
-    path = []
-    current = target_gate
-    while current != start:
-        path.append(current)
-        current = prev_nodes[current]
-    path.reverse()
 
-    return path[0] if path else target_gate
+def find_path(start, target, graph):
+    queue = deque([start])
+    par = {start: None}
+    while queue:
+        cur = queue.popleft()
+        if cur == target:
+            break
+        for nxt in sorted(graph[cur]):
+            if nxt not in par:
+                par[nxt] = cur
+                queue.append(nxt)
+    path_ = []
+    x = target
+    while x is not None:
+        path_.append(x)
+        x = par[x]
+    return list(reversed(path_))
 
 
 def solve(edges: list[tuple[str, str]]) -> list[str]:
@@ -57,57 +71,26 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
     result = []
 
     while True:
-        if virus in gates:
-            break
+        next_move = find_virus_move(virus, graph, gates)
+        if next_move:
+            gate, neighbor = next_move
+        else:
+            possible = [(gate, neighbor) for gate in gates for neighbor in graph[gate]]
+            if not possible:
+                break
+            possible.sort()
+            gate, neighbor = possible[0]
+
+        result.append(f"{gate}-{neighbor}")
+        graph[gate].remove(neighbor)
+        graph[neighbor].remove(gate)
 
         next_move = find_virus_move(virus, graph, gates)
-        if next_move is None:
-            break
-
-        threat_gates = [g for g in graph.get(virus, set()) if g in gates]
-
-        if threat_gates:
-            cut_gate = min(threat_gates)
-            result.append(f"{cut_gate}-{virus}")
-
-            graph[cut_gate].remove(virus)
-            graph[virus].remove(cut_gate)
-
-            if next_move in graph and virus in graph:
-                virus = next_move
-            continue
-
-        candidate_edges = []
-        for gate in gates:
-            for node in graph.get(gate, set()):
-                candidate_edges.append((gate, node))
-        candidate_edges.sort()
-
-        found_safe = False
-        for gate, node in candidate_edges:
-            temp_graph = {}
-            for k, v in graph.items():
-                temp_graph[k] = v.copy()
-
-            temp_graph[gate].discard(node)
-            temp_graph[node].discard(gate)
-
-            next_after_cut = find_virus_move(virus, temp_graph, gates)
-            if next_after_cut is None or next_after_cut not in gates:
-                result.append(f"{gate}-{node}")
-                graph[gate].remove(node)
-                graph[node].remove(gate)
-                found_safe = True
-                break
-
-        if not found_safe and candidate_edges:
-            gate, node = candidate_edges[0]
-            result.append(f"{gate}-{node}")
-            graph[gate].remove(node)
-            graph[node].remove(gate)
-
-        if next_move in graph and virus in graph and next_move in graph[virus]:
-            virus = next_move
+        if next_move:
+            target_gate = next_move[1]
+            path = find_path(virus, target_gate, graph)
+            if len(path) > 1:
+                virus = path[1]
         else:
             break
 

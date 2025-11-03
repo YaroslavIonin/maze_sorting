@@ -9,7 +9,7 @@ def bfs(graph, root):
     }
     while queue:
         vertex = queue.popleft()
-        for neighbour in graph[vertex]:
+        for neighbour in sorted(graph[vertex]):
             if neighbour not in distance:
                 path = distance[vertex][1] + [neighbour]
                 distance[neighbour] = [

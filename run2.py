@@ -53,29 +53,32 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
         return gateway_dists[0][0]
 
     def find_virus_move(pos, target_gw):
-        distances = {pos: 0}
+        """Определяет следующий ход вируса"""
+        dist_from_gw = {}
         prev = {}
-        queue = deque([pos])
+        queue = deque([target_gw])
+        dist_from_gw[target_gw] = 0
+        prev[target_gw] = None
 
         while queue:
             current = queue.popleft()
             for neighbor in graph[current]:
-                if neighbor not in distances:
-                    distances[neighbor] = distances[current] + 1
+                if neighbor not in dist_from_gw:
+                    dist_from_gw[neighbor] = dist_from_gw[current] + 1
                     prev[neighbor] = current
                     queue.append(neighbor)
 
-        if target_gw not in distances:
+        if pos not in dist_from_gw:
             return None
 
-        path = []
-        current = target_gw
-        while current != pos:
-            path.append(current)
-            current = prev[current]
-        path.reverse()
+        current_dist = dist_from_gw[pos]
+        candidates = []
 
-        return path[0] if path else None
+        for neighbor in graph[pos]:
+            if neighbor in dist_from_gw and dist_from_gw[neighbor] == current_dist - 1:
+                candidates.append(neighbor)
+
+        return min(candidates) if candidates else None
 
     def get_all_gateway_links():
         links = []
@@ -92,7 +95,7 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
         graph[node].remove(gw)
 
         distances = bfs_distances(virus_position)
-        path_exists = any(gate in distances for gate in gates)
+        path_exists = gw in distances
 
         graph[gw].append(node)
         graph[node].append(gw)
@@ -101,14 +104,6 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
 
     def find_best_link_to_cut(virus_position, target_gw):
         gateway_links = get_all_gateway_links()
-
-        immediate_threats = []
-        for neighbor in graph[virus_position]:
-            if neighbor in gates:
-                immediate_threats.append(f"{neighbor}-{virus_position}")
-
-        if immediate_threats:
-            return min(immediate_threats)
 
         critical_links = []
         for link in gateway_links:
@@ -121,9 +116,10 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
 
         target_distances = bfs_distances(target_gw)
         path_links = []
+
         for link in gateway_links:
             gw, node = link.split('-')
-            if node in target_distances and gw == target_gw:
+            if node in target_distances:
                 path_links.append(link)
 
         if path_links:
@@ -143,7 +139,6 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
             gw, node = action.split('-')
             graph[gw].remove(node)
             graph[node].remove(gw)
-
             continue
 
         target_gateway = find_target_gateway(virus)

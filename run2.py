@@ -33,11 +33,12 @@ def get_next_step(graph, current):
 
         return number, key_, letters_list
 
-    upper_distance = dict(sorted(upper_distance.items(), key=custom_sort))
-    next_step = None
-    for key, value in upper_distance.items():
-        next_step = key, value
-        break
+    # upper_distance = dict(sorted(upper_distance.items(), key=custom_sort))
+    # next_step = None
+    # for key, value in upper_distance.items():
+    #     next_step = key, value
+    #     break
+    next_step = min(upper_distance.items(), key=custom_sort)
     return next_step
 
 

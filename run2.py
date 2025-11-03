@@ -53,32 +53,29 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
         return gateway_dists[0][0]
 
     def find_virus_move(pos, target_gw):
-        """Определяет следующий ход вируса"""
-        dist_from_gw = {}
+        distances = {pos: 0}
         prev = {}
-        queue = deque([target_gw])
-        dist_from_gw[target_gw] = 0
-        prev[target_gw] = None
+        queue = deque([pos])
 
         while queue:
             current = queue.popleft()
             for neighbor in graph[current]:
-                if neighbor not in dist_from_gw:
-                    dist_from_gw[neighbor] = dist_from_gw[current] + 1
+                if neighbor not in distances:
+                    distances[neighbor] = distances[current] + 1
                     prev[neighbor] = current
                     queue.append(neighbor)
 
-        if pos not in dist_from_gw:
+        if target_gw not in distances:
             return None
 
-        current_dist = dist_from_gw[pos]
-        candidates = []
+        path = []
+        current = target_gw
+        while current != pos:
+            path.append(current)
+            current = prev[current]
+        path.reverse()
 
-        for neighbor in graph[pos]:
-            if neighbor in dist_from_gw and dist_from_gw[neighbor] == current_dist - 1:
-                candidates.append(neighbor)
-
-        return min(candidates) if candidates else None
+        return path[0] if path else None
 
     def get_all_gateway_links():
         links = []

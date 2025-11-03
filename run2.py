@@ -30,9 +30,8 @@ def get_next_step(graph, current):
         key_, value_ = item
         number = value_[0]
         letters_list = value_[1]
-        last_letter = letters_list[-1] if letters_list else ''
 
-        return number, last_letter, letters_list, key_
+        return number, key_, letters_list
 
     upper_distance = dict(sorted(upper_distance.items(), key=custom_sort))
     next_step = None

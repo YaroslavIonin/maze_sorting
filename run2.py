@@ -26,7 +26,19 @@ def get_next_step(graph, current):
     if not upper_distance:
         return None
 
-    next_step = min(upper_distance.items())
+    def custom_sort(item):
+        key_, value_ = item
+        number = value_[0]
+        letters_list = value_[1]
+        last_letter = letters_list[-1] if letters_list else ''
+
+        return number, last_letter, letters_list, key_
+
+    upper_distance = dict(sorted(upper_distance.items(), key=custom_sort))
+    next_step = None
+    for key, value in upper_distance.items():
+        next_step = key, value
+        break
     return next_step
 
 

@@ -53,7 +53,6 @@ def solve(edges: list[tuple[str, str]]) -> list[str]:
         return gateway_dists[0][0]
 
     def find_virus_move(pos, target_gw):
-        """Определяет следующий ход вируса"""
         dist_from_gw = {}
         prev = {}
         queue = deque([target_gw])

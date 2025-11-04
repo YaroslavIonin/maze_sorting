@@ -76,6 +76,9 @@ def solve(edges):
         # print("Граф до отключения узла")
         # print(graph)
         if target_node_neighbour in graph[target_node] and target_node in graph[target_node_neighbour]:
+            # if target_node_neighbour == target_node:
+            #     break
+
             graph[target_node].remove(target_node_neighbour)
             graph[target_node_neighbour].remove(target_node)
             result.append(f"{target_node}-{target_node_neighbour}")
@@ -117,6 +120,7 @@ def solve(edges):
         # print()
 
     # print()
+    result.sort()
     return result
 
 

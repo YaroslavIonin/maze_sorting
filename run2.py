@@ -109,6 +109,8 @@ def solve(edges):
         #     print(next_step)
 
         _, (_, path) = next_step
+        if not path or len(path) <= 1:
+            break
         virus = path[0]
         # print("Вирус шагает на", virus)
         # break

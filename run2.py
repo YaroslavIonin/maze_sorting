@@ -80,7 +80,22 @@ def solve(edges):
             graph[target_node_neighbour].remove(target_node)
             result.append(f"{target_node}-{target_node_neighbour}")
         else:
-            raise ValueError(f"ОШибка {edges}")
+            # Если связь уже удалена, ищем другую связь для отключения
+            available_links = []
+            for gate in graph:
+                if gate.isupper():
+                    for neighbor in graph[gate]:
+                        available_links.append(f"{gate}-{neighbor}")
+
+            if available_links:
+                # Берем лексикографически наименьшую доступную связь
+                link_to_cut = min(available_links)
+                gate, node = link_to_cut.split('-')
+                graph[gate].remove(node)
+                graph[node].remove(gate)
+                result.append(link_to_cut)
+            else:
+                break  # Больше нет связей для отключения
         # print("Граф после отключения узла")
         # print(graph)
 

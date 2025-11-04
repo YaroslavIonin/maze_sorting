@@ -120,7 +120,7 @@ def solve(edges):
         # print()
 
     # print()
-    result.sort()
+    # result.sort()
     return result
 
 

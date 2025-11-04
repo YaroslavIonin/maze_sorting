@@ -38,7 +38,7 @@ def get_next_step(graph, current):
     # for key, value in upper_distance.items():
     #     next_step = key, value
     #     break
-    next_step = min(upper_distance.items(), key=custom_sort)
+    next_step = min(upper_distance.items())
     return next_step
 
 

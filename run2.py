@@ -75,8 +75,10 @@ def solve(edges):
         # Отключаю узел
         # print("Граф до отключения узла")
         # print(graph)
-        graph[target_node].remove(target_node_neighbour)
-        graph[target_node_neighbour].remove(target_node)
+        if target_node_neighbour in graph[target_node]:
+            graph[target_node].remove(target_node_neighbour)
+        if target_node in graph[target_node_neighbour]:
+            graph[target_node_neighbour].remove(target_node)
         result.append(f"{target_node}-{target_node_neighbour}")
         # print("Граф после отключения узла")
         # print(graph)
